@@ -82,11 +82,12 @@ func main() {
 	}
 	defer otelShutdown(context.Background())
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		if *endpoint != "" {
 			log.Println("sending request to " + *endpoint)
-			r, _ := http.NewRequest("GET", *endpoint, nil)
+			r, _ := http.NewRequestWithContext(ctx, "GET", *endpoint, nil)
 			client := http.Client{
-				Transport: otelhttp.NewTransport(http.DefaultTransport),
+				Transport: otelhttp.NewTransport(http.DefaultTransport, otelhttp.WithTracerProvider(otel.GetTracerProvider())),
 			}
 			rs, _ := client.Do(r)
 			b, _ := io.ReadAll(rs.Body)
@@ -95,7 +96,7 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("hello world"))
 	})
-	handler = otelhttp.NewHandler(handler, "")
+	handler = otelhttp.NewHandler(handler, "", otelhttp.WithTracerProvider(otel.GetTracerProvider()))
 	if err := http.ListenAndServe(":80", handler); err != nil {
 		panic(err)
 	}
