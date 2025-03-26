@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    volumes:
+      - ./otelconfig.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - 4317:4317
+      - 4318:4318
+    networks:
+      - kong-quickstart-net
+  servicea:
+    image: golang:1.24
+    entrypoint: go run /main.go -endpoint=http://kong-quickstart-gateway:8000/b
+    volumes:
+      - ./main.go:/main.go
+    networks:
+      - kong-quickstart-net
+  serviceb:
+    image: golang:1.24
+    entrypoint: go run /main.go -endpoint=http://kong-quickstart-gateway:8000/c
+    volumes:
+      - ./main.go:/main.go
+    networks:
+      - kong-quickstart-net
+  servicec:
+    image: golang:1.24
+    entrypoint: go run /main.go
+    volumes:
+      - ./main.go:/main.go
+    networks:
+      - kong-quickstart-net
+
+networks:
+  kong-quickstart-net:
+    external: true
+    driver: bridge
