@@ -11,23 +11,23 @@ services:
       - kong-quickstart-net
   servicea:
     image: golang:1.24
-    entrypoint: go run /main.go -endpoint=http://kong-quickstart-gateway:8000/b
+    entrypoint: bash -c "cd /kong && OTEL_SERVICE_NAME=a go run main.go -endpoint=http://kong-quickstart-gateway:8000/b"
     volumes:
-      - ./main.go:/main.go
+      - ./:/kong
     networks:
       - kong-quickstart-net
   serviceb:
     image: golang:1.24
-    entrypoint: go run /main.go -endpoint=http://kong-quickstart-gateway:8000/c
+    entrypoint: bash -c "cd /kong && OTEL_SERVICE_NAME=b go run main.go -endpoint=http://kong-quickstart-gateway:8000/c"
     volumes:
-      - ./main.go:/main.go
+      - ./:/kong
     networks:
       - kong-quickstart-net
   servicec:
     image: golang:1.24
-    entrypoint: go run /main.go
+    entrypoint: bash -c "cd /kong && OTEL_SERVICE_NAME=c go run main.go"
     volumes:
-      - ./main.go:/main.go
+      - ./:/kong
     networks:
       - kong-quickstart-net
 
