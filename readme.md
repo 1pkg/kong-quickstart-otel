@@ -1,5 +1,7 @@
 ## Kong quickstart opentelemetry plugin
 
+### Run
+
 Update the `otelconfig.yaml` to start OTel collector and few services.
 
 ```bash
@@ -22,4 +24,12 @@ Send a request to the services.
 
 ```bash
 curl http://localhost:8000/a                                                                                           
+```
+
+### Clean up
+
+Uninstall kong.
+
+```bash
+curl -Ls get.konghq.com/quickstart | bash -s -- -d
 ```
