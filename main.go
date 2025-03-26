@@ -83,6 +83,7 @@ func main() {
 	defer otelShutdown(context.Background())
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+		log.Printf("received request with headers %v", r.Header)
 		if *endpoint != "" {
 			log.Println("sending request to " + *endpoint)
 			r, _ := http.NewRequestWithContext(ctx, "GET", *endpoint, nil)
