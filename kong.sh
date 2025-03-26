@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-curl -Ls get.konghq.com/quickstart | sh -s -- -t 3.1.1.1-alpine -e KONG_OPENTELEMETRY_TRACING=all -e KONG_LOG_LEVEL=debug
+curl -Ls get.konghq.com/quickstart | bash
 
 curl --request POST \
   --url http://localhost:8001/plugins \
@@ -8,6 +8,6 @@ curl --request POST \
   --data '{
 	"name": "opentelemetry",
 	"config": {
-		"endpoint": "http://kong-demo-opentelemetry-collector-1:4318/v1/traces"
+		"endpoint": "http://172.17.0.1:4318/v1/traces"
 	}
 }'

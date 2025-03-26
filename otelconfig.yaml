@@ -8,16 +8,23 @@ receivers:
 
 exporters:
   debug:
-    verbosity: detailed 
+    verbosity: detailed
+  otlphttp/ess:
+    endpoint: ${ELASTIC_APM_SERVER_URL}
+    headers:
+      Authorization: "Bearer ${ELASTIC_APM_SECRET_TOKEN}"
         
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [otlphttp/ess, debug]
     metrics:
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [otlphttp/ess, debug]
     logs: 
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [otlphttp/ess, debug]
+  telemetry:
+    logs:
+      level: debug
