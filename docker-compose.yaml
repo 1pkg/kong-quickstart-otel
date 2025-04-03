@@ -1,37 +1,39 @@
 version: '3.9'
 services:
   opentelemetry-collector:
+    hostname: otel-collector
     image: otel/opentelemetry-collector-contrib:0.96.0
     volumes:
       - ./otelconfig.yaml:/etc/otelcol-contrib/config.yaml
     ports:
-      - 4317:4317
-      - 4318:4318
-    networks:
-      - kong-quickstart-net
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      ELASTIC_APM_SERVER_URL: "${ELASTIC_APM_SERVER_URL}"
+      ELASTIC_APM_SECRET_TOKEN: "${ELASTIC_APM_SECRET_TOKEN}"
   servicea:
-    image: golang:1.24
-    entrypoint: bash -c "cd /kong && OTEL_SERVICE_NAME=a go run main.go -endpoint=http://kong-quickstart-gateway:8000/b"
-    volumes:
-      - ./:/kong
-    networks:
-      - kong-quickstart-net
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["-endpoint=http://172.17.0.1:8000/b"]
+    environment:
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=a,service.version=0.1.0"
+    ports:
+      - "10080:80"
   serviceb:
-    image: golang:1.24
-    entrypoint: bash -c "cd /kong && OTEL_SERVICE_NAME=b go run main.go -endpoint=http://kong-quickstart-gateway:8000/c"
-    volumes:
-      - ./:/kong
-    networks:
-      - kong-quickstart-net
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10081:80"
+    command: ["-endpoint=http://172.17.0.1:8000/c"]
+    environment:
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=b,service.version=0.1.0"
   servicec:
-    image: golang:1.24
-    entrypoint: bash -c "cd /kong && OTEL_SERVICE_NAME=c go run main.go"
-    volumes:
-      - ./:/kong
-    networks:
-      - kong-quickstart-net
-
-networks:
-  kong-quickstart-net:
-    external: true
-    driver: bridge
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10082:80"
+    environment:
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=c,service.version=0.1.0"

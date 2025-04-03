@@ -1,12 +1,14 @@
 ## Kong quickstart opentelemetry plugin
 
+### Run
+
 Update the `otelconfig.yaml` to start OTel collector and few services.
 
 ```bash
-docker compose up
+docker compose build --no-cache && ELASTIC_APM_SERVER_URL="https://my-apm-server-url:443" ELASTIC_APM_SECRET_TOKEN="REDACTED" docker compose up -d
 ```
 
-Initialize Kong with opentelemetry [pluging](https://docs.konghq.com/hub/kong-inc/opentelemetry/).
+Initialize Kong with opentelemetry [plugin](https://docs.konghq.com/hub/kong-inc/opentelemetry/).
 
 ```bash
 ./kong.sh
@@ -22,4 +24,12 @@ Send a request to the services.
 
 ```bash
 curl http://localhost:8000/a                                                                                           
+```
+
+### Clean up
+
+Uninstall kong.
+
+```bash
+curl -Ls get.konghq.com/quickstart | bash -s -- -d
 ```
