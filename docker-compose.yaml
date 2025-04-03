@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["-endpoint=http://172.17.0.1:8000/b"]
+    command: ["-endpoint=http://host.docker.internal:8000/b"]
     environment:
       OTEL_RESOURCE_ATTRIBUTES: "service.name=a,service.version=0.1.0"
     ports:
@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "10081:80"
-    command: ["-endpoint=http://172.17.0.1:8000/c"]
+    command: ["-endpoint=http://host.docker.internal:8000/c"]
     environment:
       OTEL_RESOURCE_ATTRIBUTES: "service.name=b,service.version=0.1.0"
   servicec:
@@ -35,5 +35,29 @@ services:
       dockerfile: Dockerfile
     ports:
       - "10082:80"
+    command: ["-endpoint=http://host.docker.internal:8000/py"]
     environment:
       OTEL_RESOURCE_ATTRIBUTES: "service.name=c,service.version=0.1.0"
+  servicepy:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "10083:80"
+    environment:
+      ENDPOINT: "http://host.docker.internal:8000/pynext"
+      ELASTIC_APM_SERVICE_NAME: py
+      ELASTIC_APM_LOG_LEVEL: debug
+      ELASTIC_APM_SERVER_URL: "${ELASTIC_APM_SERVER_URL}"
+      ELASTIC_APM_SECRET_TOKEN: "${ELASTIC_APM_SECRET_TOKEN}"
+  servicepynext:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "10084:80"
+    environment:
+      ELASTIC_APM_SERVICE_NAME: pynext
+      ELASTIC_APM_LOG_LEVEL: debug
+      ELASTIC_APM_SERVER_URL: "${ELASTIC_APM_SERVER_URL}"
+      ELASTIC_APM_SECRET_TOKEN: "${ELASTIC_APM_SECRET_TOKEN}"

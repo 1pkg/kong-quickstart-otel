@@ -8,7 +8,7 @@ curl -X POST \
   --data '{
 	"name": "opentelemetry",
 	"config": {
-		"traces_endpoint": "http://172.17.0.1:4318/v1/traces",
+		"traces_endpoint": "http://host.docker.internal:4318/v1/traces",
 		"propagation": {
 		  "inject": ["w3c"],
 		  "extract": ["w3c"],

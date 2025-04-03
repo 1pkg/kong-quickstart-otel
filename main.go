@@ -55,7 +55,7 @@ func newTracerProvider() (*trace.TracerProvider, error) {
 	traceExporter, err := otlptracehttp.New(
 		context.Background(),
 		otlptracehttp.WithInsecure(),
-		otlptracehttp.WithEndpoint("172.17.0.1:4318"),
+		otlptracehttp.WithEndpoint("host.docker.internal:4318"),
 	)
 	if err != nil {
 		return nil, err

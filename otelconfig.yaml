@@ -6,6 +6,13 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+processors:
+   transform:
+     trace_statements:
+       - context: span
+         statements:
+         - set(attributes["peer.service"], attributes["net.peer.name"]) where attributes["net.peer.name"] != "" and name == "kong.balancer"
+
 exporters:
   debug:
     verbosity: detailed
@@ -18,6 +25,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [transform]
       exporters: [otlphttp/ess, debug]
     metrics:
       receivers: [otlp]
